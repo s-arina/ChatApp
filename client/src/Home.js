@@ -10,33 +10,30 @@ function Home({ username, room, socket, setUsername, setRoom }) {
     if (username && room) {
       // room is passed in as data in server/index.js
       socket.emit('join_room', { username, room });
-      //   setShowChat(true);
     }
     navigate(`/${room}`, { replace: true });
   };
 
   return (
-    // {!showChat ? (
     <div className='joinChatContainer'>
       <h3>Join a Chat!</h3>
-      <input
-        type='text'
-        placeholder='Me...'
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <select onChange={(e) => setRoom(e.target.value)}>
-        <option>Select a room</option>
-        <option value='eggs'>eggs</option>
-        <option value='node'>node</option>
-        <option value='express'>express</option>
-        <option value='react'>react</option>
-      </select>
-      <button onClick={joinRoom}>Join a Room</button>
+      <form className='join-chat' onSubmit={joinRoom}>
+        <input
+          type='text'
+          placeholder='Me...'
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <select onChange={(e) => setRoom(e.target.value)} required>
+          <option value=''>Select a room</option>
+          <option value='eggs'>eggs</option>
+          <option value='node'>node</option>
+          <option value='express'>express</option>
+          <option value='react'>react</option>
+        </select>
+        <button>Join a Room</button>
+      </form>
     </div>
-    //   ) : (
-    // <Chats socket={socket} username={username} room={room} />
-    //   )}
-    // </div>
   );
 }
 
