@@ -141,6 +141,19 @@ body {
   margin-right: 5px;
 }
 
+#chatbot {
+  justify-content: center;
+}
+
+#chatbot .message-content {
+  justify-content: center;
+  background-color: grey;
+}
+
+#chatbot .message-meta {
+  justify-content: center;
+}
+
 .message-meta #author {
   margin-left: 10px;
   font-weight: bold;

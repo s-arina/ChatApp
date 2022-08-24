@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ScrollToBottom from 'react-scroll-to-bottom';
+import RoomAndUsers from './RoomAndUsers';
 
 function Chats({ socket, username, room }) {
   const [currentMessage, setCurrentMessage] = useState('');
@@ -33,10 +34,13 @@ function Chats({ socket, username, room }) {
     });
   }, [socket]);
 
+  console.log('message list', messageList);
+
   return (
     <div className='chat-window'>
+      <RoomAndUsers socket={socket} username={username} room={room} />
       <div className='chat-header'>
-        <p>Live Chat</p>
+        <p>You are in room: {room}</p>
       </div>
       <div className='chat-body'>
         <ScrollToBottom className='message-container'>
@@ -44,7 +48,14 @@ function Chats({ socket, username, room }) {
             <div
               className='message'
               // if the user sent the message, change class style accordingly
-              id={username === msg.author ? 'you' : 'other'}
+              id={
+                msg.username === 'ChatBot'
+                  ? 'chatbot'
+                  : username === msg.author
+                  ? 'other'
+                  : 'you'
+              }
+              key={msg.createdTime}
             >
               <div>
                 <div className='message-content'>

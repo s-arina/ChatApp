@@ -19,6 +19,9 @@ app.use(cors());
 // port to listen to
 const PORT = process.env.PORT || 3000;
 
+// import the function
+const leaveRoom = require('./utils/leave-room');
+
 // ========== SERVER CREATION
 
 // using the http library and pass the express app to generate the server
@@ -38,6 +41,11 @@ const io = new Server(server, {
 
 // ========== LISTEN FOR SERVER CONNECT/DISCONNECT
 
+const CHAT_BOT = 'ChatBot';
+
+let chatRoom = '';
+let allUsers = [];
+
 // initiate and detect if someone has connected to the server
 // listens for an event (connection)
 io.on('connection', (socket) => {
@@ -47,23 +55,70 @@ io.on('connection', (socket) => {
   // ===> SOCKET.ON: bring the data from client side passed in over
   // ADD A USER TO A ROOM
   socket.on('join_room', (data) => {
-    socket.join(data);
-    console.log(`user with id: ${socket.id} joined room ${data}`);
+    const { username, room } = data;
+    socket.join(room);
+    console.log(`user with id: ${socket.id} joined room ${room}`);
+
+    // send a message to the room for a newly joined user
+    const createdTime = Date.now();
+    socket.to(room).emit('receive_message', {
+      message: `${username} has joined the chat room.`,
+      username: CHAT_BOT,
+      createdTime,
+    });
+
+    // send a welcome message to the person joining
+    socket.emit('receive_message', {
+      message: `Welcome ${username}!`,
+      username: CHAT_BOT,
+      createdTime,
+    });
+
+    chatRoom = room;
+    allUsers.push({ id: socket.id, username, room });
+    chatRoomUsers = allUsers.filter((user) => user.room === room);
+    socket.to(room).emit('chatroom_users', chatRoomUsers);
+    socket.emit('chatroom_users', chatRoomUsers);
+
+    // ===> SOCKET.ON: bring the data from client side passed in over
+    // LEAVING A ROOM
+    socket.on('leave_room', (data) => {
+      const { username, room } = data;
+      socket.leave(room);
+      const date = Date.now();
+
+      allUsers = leaveRoom(socket.id, allUsers);
+      socket.to(room).emit('chatroom_users', allUsers);
+      socket.to(room).emit('receive_message', {
+        username: CHAT_BOT,
+        message: `${username} has left the chat.`,
+        date,
+      });
+      console.log(`${username} has left the chat`);
+    });
   });
 
   // ===> SOCKET.ON: sending message data sent from a user
   // SENDING MESSAGES
   socket.on('send_message', (data) => {
     console.log(data);
-
     // have the data only be available to users in the same room
     socket.to(data.room).emit('receive_message', data);
   });
 
   // ===> SOCKET.ON: runs when someone disconnects from the server
-  // WHEN A USER LEAVES THE SERVER
+  // WHEN A USER DISCONNECTS FRMO THE SERVER
   socket.on('disconnect', () => {
-    console.log('user disconnected:', socket.id);
+    const user = allUsers.find((user) => user.id == socket.id);
+    if (user?.username) {
+      allUsers = leaveRoom(socket.id, allUsers);
+      socket.to(chatRoom).emit('chatroom_users', allUsers);
+      socket.to(chatRoom).emit('receive_message', {
+        username: CHAT_BOT,
+        message: `${user.username} has disconnected from the chat.`,
+      });
+      console.log(`${user.username} has disconnected from the chat.`);
+    }
   });
 });
 

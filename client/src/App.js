@@ -2,48 +2,61 @@
 // used to establish a connection to the server
 import io from 'socket.io-client';
 import './App.css';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Chats from './Chats';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './Home';
 
 const socket = io.connect('http://localhost:3000');
 
 function App() {
   const [username, setUsername] = useState('');
   const [room, setRoom] = useState('');
-  const [showChat, setShowChat] = useState(false);
-
-  // connect the user on the server to socket.io room they want to join
-  const joinRoom = () => {
-    // if someone inputs a username and room name
-    if (username && room) {
-      // room is passed in as data in server/index.js
-      socket.emit('join_room', room);
-      setShowChat(true);
-    }
-  };
+  // const [showChat, setShowChat] = useState(false);
 
   return (
-    <div className='App'>
-      {!showChat ? (
-        <div className='joinChatContainer'>
-          <h3>Join a Chat!</h3>
-          <input
-            type='text'
-            placeholder='Me...'
-            onChange={(e) => setUsername(e.target.value)}
+    <Router>
+      <div className='App'>
+        <Routes>
+          <Route
+            path='/'
+            element={
+              <Home
+                username={username}
+                setUsername={setUsername}
+                room={room}
+                setRoom={setRoom}
+                socket={socket}
+              />
+            }
           />
-          <input
-            type='text'
-            placeholder='Room ID...'
-            onChange={(e) => setRoom(e.target.value)}
+          <Route
+            path={`/${room}`}
+            element={<Chats username={username} room={room} socket={socket} />}
           />
-          <button onClick={joinRoom}>Join a Room</button>
-        </div>
-      ) : (
-        <Chats socket={socket} username={username} room={room} />
-      )}
-    </div>
+        </Routes>
+        {/* {!showChat ? (
+          <div className='joinChatContainer'>
+            <h3>Join a Chat!</h3>
+            <input
+              type='text'
+              placeholder='Me...'
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <select onChange={(e) => setRoom(e.target.value)}>
+              <option>Select a room</option>
+              <option value='eggs'>eggs</option>
+              <option value='node'>node</option>
+              <option value='express'>express</option>
+              <option value='react'>react</option>
+            </select>
+            <button onClick={joinRoom}>Join a Room</button>
+          </div>
+        ) : (
+          <Chats socket={socket} username={username} room={room} />
+        )}*/}
+      </div>
+    </Router>
   );
 }
 
