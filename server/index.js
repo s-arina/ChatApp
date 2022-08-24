@@ -16,6 +16,9 @@ const { Server } = require('socket.io');
 // use the middleware
 app.use(cors());
 
+// port to listen to
+const PORT = process.env.PORT || 3000;
+
 // ========== SERVER CREATION
 
 // using the http library and pass the express app to generate the server
@@ -27,7 +30,7 @@ const io = new Server(server, {
   // specify cors credentials/settings/etc if needed
   cors: {
     // which server is making the calls to our server (react server it will be running in)
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:3001',
     // allow specific requests
     methods: ['GET', 'POST'],
   },
@@ -39,11 +42,17 @@ const io = new Server(server, {
 // listens for an event (connection)
 io.on('connection', (socket) => {
   // runs a callback to give a user a specific id
-  console.log(socket.id);
+  console.log('user connected:', socket.id);
+
+  // bring the data from client side passed in over
+  socket.on('join_room', (data) => {
+    socket.join(data);
+    console.log(`user with id: ${socket.id} joined room ${data}`);
+  });
 
   // runs when someone disconnects from the server
   socket.on('disconnect', () => {
-    console.log('user disconnected', socket.id);
+    console.log('user disconnected:', socket.id);
   });
 });
 
@@ -52,6 +61,6 @@ io.on('connection', (socket) => {
 // listen to a chosen port, check if it's running
 // add "start": "nodemon index.js" script to package.json
 // so nodemon will automatically restart the server every time there's changes, more efficient
-server.listen(3001, () => {
-  console.log('-----> SERVER RUNNING <-----');
+server.listen(PORT, () => {
+  console.log(`-----> SERVER RUNNING ON ${PORT}<-----`);
 });
