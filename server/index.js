@@ -1,3 +1,5 @@
+// ========== IMPORTS
+
 // require express and create an instance of it
 const express = require('express');
 const app = express();
@@ -14,7 +16,7 @@ const { Server } = require('socket.io');
 // use the middleware
 app.use(cors());
 
-// ==========
+// ========== SERVER CREATION
 
 // using the http library and pass the express app to generate the server
 const server = http.createServer(app);
@@ -30,6 +32,22 @@ const io = new Server(server, {
     methods: ['GET', 'POST'],
   },
 });
+
+// ========== LISTEN FOR SERVER CONNECT/DISCONNECT
+
+// initiate and detect if someone has connected to the server
+// listens for an event (connection)
+io.on('connection', (socket) => {
+  // runs a callback to give a user a specific id
+  console.log(socket.id);
+
+  // runs when someone disconnects from the server
+  socket.on('disconnect', () => {
+    console.log('user disconnected', socket.id);
+  });
+});
+
+// ========== PORT
 
 // listen to a chosen port, check if it's running
 // add "start": "nodemon index.js" script to package.json
