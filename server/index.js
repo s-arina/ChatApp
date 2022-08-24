@@ -44,18 +44,24 @@ io.on('connection', (socket) => {
   // runs a callback to give a user a specific id
   console.log('user connected:', socket.id);
 
-  // SOCKET.ON: bring the data from client side passed in over
+  // ===> SOCKET.ON: bring the data from client side passed in over
+  // ADD A USER TO A ROOM
   socket.on('join_room', (data) => {
     socket.join(data);
     console.log(`user with id: ${socket.id} joined room ${data}`);
   });
 
-  // SOCKET.ON: sending message data sent from a user
+  // ===> SOCKET.ON: sending message data sent from a user
+  // SENDING MESSAGES
   socket.on('send_message', (data) => {
     console.log(data);
+
+    // have the data only be available to users in the same room
+    socket.to(data.room).emit('receive_message', data);
   });
 
-  // SOCKET.ON: runs when someone disconnects from the server
+  // ===> SOCKET.ON: runs when someone disconnects from the server
+  // WHEN A USER LEAVES THE SERVER
   socket.on('disconnect', () => {
     console.log('user disconnected:', socket.id);
   });
