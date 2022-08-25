@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,700');
+
 .App {
   width: 100vw;
   height: 100vh;
@@ -7,11 +9,6 @@
   display: grid;
   place-items: center;
 }
-body {
-  margin: 0%;
-  padding: 0%;
-}
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,700');
 
 .joinChatContainer {
   display: flex;
@@ -58,7 +55,6 @@ select {
 
 .chat-window {
   width: 300px;
-  height: 420px;
 }
 
 .chat-window p {
@@ -66,12 +62,13 @@ select {
 }
 .chat-window .chat-header {
   height: 45px;
-  border-radius: 6px;
+  border-radius: 6px 6px 0 0;
   background: #263238;
   position: relative;
   cursor: pointer;
 }
 .chat-window .chat-header p {
+  text-align: center;
   display: block;
   padding: 0 1em 0 2em;
   color: #fff;
@@ -96,6 +93,7 @@ select {
 .chat-window .chat-body .message-container::-webkit-scrollbar {
   display: none;
 }
+
 .chat-window .chat-body .message {
   height: auto;
   padding: 10px;
@@ -112,13 +110,12 @@ select {
   color: white;
   display: flex;
   align-items: center;
-  margin-right: 5px;
-  margin-left: 5px;
-  padding-right: 5px;
-  padding-left: 5px;
   overflow-wrap: break-word;
   word-break: break-word;
+  padding: 5px 10px;
 }
+
+/* === */
 
 #you {
   justify-content: flex-start;
@@ -132,6 +129,8 @@ select {
   justify-content: flex-start;
   margin-left: 5px;
 }
+
+/* === */
 
 #other {
   justify-content: flex-end;
@@ -147,8 +146,22 @@ select {
   margin-right: 5px;
 }
 
-#chatbot {
-  justify-content: center;
+#other .message-box #time {
+  text-align: right;
+}
+
+#other .message-box #username {
+  text-align: right;
+}
+
+/* === */
+
+#chatbot #username {
+  text-align: center;
+}
+
+#chatbot #time {
+  text-align: center;
 }
 
 #chatbot .message-content {
@@ -156,14 +169,23 @@ select {
   background-color: grey;
 }
 
-#chatbot .message-meta {
+#chatbot {
   justify-content: center;
 }
 
-.message-meta #author {
-  margin-left: 10px;
+/* === */
+
+#username {
   font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 3px;
 }
+
+#time {
+  font-size: 12px;
+}
+
+/* === */
 
 .chat-window .chat-body .message .message-meta {
   display: flex;
@@ -207,4 +229,24 @@ select {
 }
 .hide {
   opacity: 0 !important;
+}
+
+.users {
+  border: 1px solid black;
+  padding: 20px;
+  text-align: center;
+}
+
+.chat-box {
+  margin-top: 20px;
+}
+
+.leave-btn {
+  display: flex;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+.error {
+  text-align: center;
 }

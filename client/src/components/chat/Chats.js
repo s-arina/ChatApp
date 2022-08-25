@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Messages from './Messages';
 import RoomAndUsers from './RoomAndUsers';
 import SendMessage from './SendMessage';
+import LeaveRoom from './LeaveRoom';
 
 function Chats({ socket, username, room }) {
   const [currentMessage, setCurrentMessage] = useState('');
@@ -11,12 +12,13 @@ function Chats({ socket, username, room }) {
     if (currentMessage) {
       const messageData = {
         room: room,
-        author: username,
+        username: username,
         message: currentMessage,
-        time:
-          new Date(Date.now()).getHours() +
-          ':' +
-          new Date(Date.now()).getMinutes(),
+        time: new Date(Date.now()).toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: true,
+        }),
       };
       // async/await the data to send to the server with socket.emit
       await socket.emit('send_message', messageData);
@@ -36,20 +38,16 @@ function Chats({ socket, username, room }) {
     });
   }, [socket]);
 
-  // console.log('message list', messageList);
-
   return (
     <div className='chat-window'>
       <RoomAndUsers socket={socket} username={username} room={room} />
-      <div className='chat-header'>
-        <p>You are in room: {room}</p>
-      </div>
-      <Messages messageList={messageList} username={username} />
+      <Messages messageList={messageList} username={username} room={room} />
       <SendMessage
         currentMessage={currentMessage}
         setCurrentMessage={setCurrentMessage}
         sendMessage={sendMessage}
       />
+      <LeaveRoom socket={socket} username={username} room={room} />
     </div>
   );
 }

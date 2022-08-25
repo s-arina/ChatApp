@@ -5,7 +5,7 @@ function SendMessage({ currentMessage, setCurrentMessage, sendMessage }) {
     <div className='chat-footer'>
       <input
         type='text'
-        placeholder='Hey...'
+        placeholder='Write a message...'
         value={currentMessage}
         onChange={(e) => setCurrentMessage(e.target.value)}
         onKeyPress={(e) => e.key === 'Enter' && sendMessage()}

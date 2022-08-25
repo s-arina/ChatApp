@@ -13,14 +13,16 @@ const cors = require('cors');
 // after the rest, import Server from socket.io library
 const { Server } = require('socket.io');
 
-// use the middleware
+// import the function
+const leaveRoom = require('./utils/leave-room');
+
+// ========== MIDDLEWARE / PORT
+
+// invoke the middleware
 app.use(cors());
 
 // port to listen to
 const PORT = process.env.PORT || 3000;
-
-// import the function
-const leaveRoom = require('./utils/leave-room');
 
 // ========== SERVER CREATION
 
@@ -52,6 +54,13 @@ io.on('connection', (socket) => {
   // runs a callback to give a user a specific id
   console.log('user connected:', socket.id);
 
+  // current time
+  const time = new Date(Date.now()).toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  });
+
   // ===> SOCKET.ON: bring the data from client side passed in over
   // ADD A USER TO A ROOM
   socket.on('join_room', (data) => {
@@ -60,18 +69,17 @@ io.on('connection', (socket) => {
     console.log(`user with id: ${socket.id} joined room ${room}`);
 
     // send a message to the room for a newly joined user
-    const createdTime = Date.now();
     socket.to(room).emit('receive_message', {
       message: `${username} has joined the chat room.`,
       username: CHAT_BOT,
-      createdTime,
+      time,
     });
 
     // send a welcome message to the person joining
     socket.emit('receive_message', {
-      message: `Welcome ${username}!`,
+      message: `Welcome, ${username}!`,
       username: CHAT_BOT,
-      createdTime,
+      time,
     });
 
     // get the users of each room
@@ -86,14 +94,13 @@ io.on('connection', (socket) => {
     socket.on('leave_room', (data) => {
       const { username, room } = data;
       socket.leave(room);
-      const date = Date.now();
 
       allUsers = leaveRoom(socket.id, allUsers);
       socket.to(room).emit('chatroom_users', allUsers);
       socket.to(room).emit('receive_message', {
         username: CHAT_BOT,
         message: `${username} has left the chat.`,
-        date,
+        time,
       });
       console.log(`${username} has left the chat`);
     });
@@ -102,7 +109,7 @@ io.on('connection', (socket) => {
   // ===> SOCKET.ON:
   // SENDING MESSAGES
   socket.on('send_message', (data) => {
-    console.log(data); // messageData object in Chats.js
+    // messageData object in Chats.js (room, username, message, time)
     // have the data only be available to users in the same room
     socket.to(data.room).emit('receive_message', data);
   });
@@ -117,6 +124,7 @@ io.on('connection', (socket) => {
       socket.to(chatRoom).emit('receive_message', {
         username: CHAT_BOT,
         message: `${user.username} has disconnected from the chat.`,
+        time,
       });
       console.log(`${user.username} has disconnected from the chat.`);
     }

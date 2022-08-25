@@ -7,6 +7,7 @@ import './css/App.css';
 
 import Chats from './components/chat/Chats';
 import Home from './components/Home';
+import ErrorPage from './ErrorPage';
 
 // establish a connection to the server
 const socket = io.connect('http://localhost:3000');
@@ -35,6 +36,7 @@ function App() {
             path={`/${room}`} // send user to route based on room name
             element={<Chats username={username} room={room} socket={socket} />}
           />
+          <Route path='*' element={<ErrorPage />} />
         </Routes>
       </div>
     </Router>

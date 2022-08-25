@@ -1,6 +1,15 @@
 ## Chat App
 
-A practice chat app made with React and socket.io.
+A simple chat app.
+Frontend Client – React
+Backend Server – Express/Socket.io
+
+### Functionality
+
+- choose a nickname
+- multiple rooms to join
+- automated messages (welcome user, user has left, user has disconnected)
+- users can leave a room to join another room
 
 ### Startup
 
