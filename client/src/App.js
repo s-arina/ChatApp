@@ -1,12 +1,14 @@
 // install socket.io-client
-// used to establish a connection to the server
 import io from 'socket.io-client';
-import './App.css';
-import React, { useState } from 'react';
-import Chats from './Chats';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './Home';
 
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './css/App.css';
+
+import Chats from './components/chat/Chats';
+import Home from './components/Home';
+
+// establish a connection to the server
 const socket = io.connect('http://localhost:3000');
 
 function App() {
@@ -18,7 +20,7 @@ function App() {
       <div className='App'>
         <Routes>
           <Route
-            path='/'
+            path='/' // initial route is the join page
             element={
               <Home
                 username={username}
@@ -30,7 +32,7 @@ function App() {
             }
           />
           <Route
-            path={`/${room}`}
+            path={`/${room}`} // send user to route based on room name
             element={<Chats username={username} room={room} socket={socket} />}
           />
         </Routes>

@@ -74,6 +74,7 @@ io.on('connection', (socket) => {
       createdTime,
     });
 
+    // get the users of each room
     chatRoom = room;
     allUsers.push({ id: socket.id, username, room });
     chatRoomUsers = allUsers.filter((user) => user.room === room);
@@ -98,16 +99,16 @@ io.on('connection', (socket) => {
     });
   });
 
-  // ===> SOCKET.ON: sending message data sent from a user
+  // ===> SOCKET.ON:
   // SENDING MESSAGES
   socket.on('send_message', (data) => {
-    console.log(data);
+    console.log(data); // messageData object in Chats.js
     // have the data only be available to users in the same room
     socket.to(data.room).emit('receive_message', data);
   });
 
-  // ===> SOCKET.ON: runs when someone disconnects from the server
-  // WHEN A USER DISCONNECTS FRMO THE SERVER
+  // ===> SOCKET.ON
+  // WHEN A USER DISCONNECTS FROM THE SERVER
   socket.on('disconnect', () => {
     const user = allUsers.find((user) => user.id == socket.id);
     if (user?.username) {

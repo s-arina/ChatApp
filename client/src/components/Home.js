@@ -11,6 +11,7 @@ function Home({ username, room, socket, setUsername, setRoom }) {
       // room is passed in as data in server/index.js
       socket.emit('join_room', { username, room });
     }
+    // navigate user to the room route
     navigate(`/${room}`, { replace: true });
   };
 
@@ -20,16 +21,16 @@ function Home({ username, room, socket, setUsername, setRoom }) {
       <form className='join-chat' onSubmit={joinRoom}>
         <input
           type='text'
-          placeholder='Me...'
+          placeholder='Nickname'
           onChange={(e) => setUsername(e.target.value)}
           required
         />
         <select onChange={(e) => setRoom(e.target.value)} required>
           <option value=''>Select a room</option>
-          <option value='eggs'>eggs</option>
-          <option value='node'>node</option>
-          <option value='express'>express</option>
-          <option value='react'>react</option>
+          <option value='Room1'>Room1</option>
+          <option value='Room2'>Room2</option>
+          <option value='Room3'>Room3</option>
+          <option value='Room4'>Room4</option>
         </select>
         <button>Join a Room</button>
       </form>

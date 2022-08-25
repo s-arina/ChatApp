@@ -6,6 +6,7 @@ function RoomAndUsers({ socket, username, room }) {
 
   const [roomUsers, setRoomUsers] = useState([]);
 
+  //
   useEffect(() => {
     socket.on('chatroom_users', (data) => {
       console.log(data);
