@@ -1,6 +1,6 @@
 ## Chat App
 
-A simple chat app.
+A simple chat app to learn/practice sockets.
 Frontend Client – React
 Backend Server – Express/Socket.io
 

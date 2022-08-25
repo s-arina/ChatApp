@@ -1,3 +1,6 @@
+// ========== INSTALL
+
+// /server npm init
 // npm i express nodemon cors socket.io
 
 // ========== IMPORTS
@@ -12,7 +15,7 @@ const http = require('http');
 // socket.io deals with a lot of cors issues, this will help
 const cors = require('cors');
 
-// after the rest, import Server from socket.io library
+// import Server from socket.io library
 const { Server } = require('socket.io');
 
 // import the function
@@ -45,8 +48,10 @@ const io = new Server(server, {
 
 // ========== LISTEN FOR SERVER CONNECT/DISCONNECT
 
+// create a bot
 const CHAT_BOT = 'ChatBot';
 
+// initialize variables to be used
 let chatRoom = '';
 let allUsers = [];
 
@@ -67,17 +72,18 @@ io.on('connection', (socket) => {
   // ADD A USER TO A ROOM
   socket.on('join_room', (data) => {
     const { username, room } = data;
+    // join method
     socket.join(room);
-    console.log(`user with id: ${socket.id} joined room ${room}`);
+    console.log(`user ${username} with id: ${socket.id} joined room ${room}`);
 
-    // send a message to the room for a newly joined user
+    // BOT: send a message to all in the room for a newly joined user
     socket.to(room).emit('receive_message', {
       message: `${username} has joined the chat room.`,
       username: CHAT_BOT,
       time,
     });
 
-    // send a welcome message to the person joining
+    // BOT: send a welcome message to the person joining
     socket.emit('receive_message', {
       message: `Welcome, ${username}!`,
       username: CHAT_BOT,
@@ -85,9 +91,13 @@ io.on('connection', (socket) => {
     });
 
     // get the users of each room
+    // set chatRoom to be the connected room
     chatRoom = room;
+    // push all user data (id/name/room) into an array
     allUsers.push({ id: socket.id, username, room });
+    // create a new array with user info belonging to the respective room
     chatRoomUsers = allUsers.filter((user) => user.room === room);
+    // send the data back to client side (RoomAndUsers.js)
     socket.to(room).emit('chatroom_users', chatRoomUsers);
     socket.emit('chatroom_users', chatRoomUsers);
 
@@ -95,10 +105,14 @@ io.on('connection', (socket) => {
     // LEAVING A ROOM
     socket.on('leave_room', (data) => {
       const { username, room } = data;
+      // leave method
       socket.leave(room);
-
+      // call the imported function for filtering out a user
       allUsers = leaveRoom(socket.id, allUsers);
+
+      // update the remaining users in the room
       socket.to(room).emit('chatroom_users', allUsers);
+      // BOT: send a message for a leaving user
       socket.to(room).emit('receive_message', {
         username: CHAT_BOT,
         message: `${username} has left the chat.`,
@@ -117,12 +131,20 @@ io.on('connection', (socket) => {
   });
 
   // ===> SOCKET.ON
-  // WHEN A USER DISCONNECTS FROM THE SERVER
+  // WHEN A USER DISCONNECTS FROM THE SERVER (closes tab/window, etc)
   socket.on('disconnect', () => {
+    // find the user in the array based on socket id
     const user = allUsers.find((user) => user.id == socket.id);
+
+    // if the user has a username associated with it
     if (user?.username) {
+      // use the imported function to filter them out
       allUsers = leaveRoom(socket.id, allUsers);
+
+      // update the remaining users
       socket.to(chatRoom).emit('chatroom_users', allUsers);
+
+      // BOT: send a message to the chat about the disconnected user
       socket.to(chatRoom).emit('receive_message', {
         username: CHAT_BOT,
         message: `${user.username} has disconnected from the chat.`,

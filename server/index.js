@@ -28,6 +28,7 @@ const io = new Server(server, {
 
 // ========== LISTEN FOR SERVER CONNECT/DISCONNECT
 
+// bot creation
 const CHAT_BOT = 'ChatBot';
 
 let chatRoom = '';
