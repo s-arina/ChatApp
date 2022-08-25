@@ -4,8 +4,8 @@ function RoomAndUsers({ socket }) {
   const [roomUsers, setRoomUsers] = useState([]);
 
   useEffect(() => {
+    // get chatroom users from server
     socket.on('chatroom_users', (data) => {
-      console.log(data);
       setRoomUsers(data);
     });
     return () => socket.off('chatroom_users');

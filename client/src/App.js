@@ -36,7 +36,10 @@ function App() {
             path={`/${room}`} // send user to route based on room name
             element={<Chats username={username} room={room} socket={socket} />}
           />
-          <Route path='*' element={<ErrorPage />} />
+          <Route
+            path='*' // any other page doesn't exit, show error
+            element={<ErrorPage />}
+          />
         </Routes>
       </div>
     </Router>
